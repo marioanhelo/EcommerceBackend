@@ -263,7 +263,26 @@ const deleteClient = async (req, res) => {
 
 
 const createInvoice = async (req, res) => {
-
+    const { total,invoice_date,id_client } = req.body;
+  try {
+    const dbResponse = await connect.query(
+      "INSERT INTO invoice(total,invoice_date,id_client)values($1,$2,$3);",
+      [total,invoice_date,id_client]
+    );
+    if (dbResponse.rowCount > 0) {
+      res.status(201).send({
+        message: "Invoice created",
+      });
+    } else {
+      res.status(409).send({
+        message: "Error, invoice not created in this time, try later",
+      });
+    }
+  } catch (error) {
+    res.status(404).send({
+      error,
+    });
+  }
 }
 const getInvoices = async (req, res) => {
     try {
