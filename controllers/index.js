@@ -299,7 +299,7 @@ const getInvoices = async (req, res) => {
 const getInvoice = async (req, res) => {
     const id = req.params.idInvoice
     try {
-        const dbResponse = await connect.query('SELECT * FROM invoices WHERE invoice_id = $1',[id])
+        const dbResponse = await connect.query('SELECT * FROM invoice WHERE invoice_id = $1',[id])
         if(dbResponse.rowCount > 0){
             res.status(200).send({
                 data:dbResponse.rows
@@ -321,7 +321,7 @@ const modifyInvoice = async (req, res) => {
     const {total, invoice_date, id_client} = req.body
     try {
         const dbResponse = await connect.query(`
-        UPDATE invoices
+        UPDATE invoice
         SET
             total = $1,
             invoice_date = $2,
@@ -347,7 +347,7 @@ const modifyInvoice = async (req, res) => {
 const deleteInvoice = async (req, res) => {
     const id = req.params.idInvoice
     try {
-        const dbResponse = await connect.query(`DELETE FROM invoices where invoice_id = $1`,[id])
+        const dbResponse = await connect.query(`DELETE FROM invoice where invoice_id = $1`,[id])
         if(dbResponse.rowCount > 0){
             res.status(200).send({
                 message:"Invoice deleted"
