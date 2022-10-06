@@ -489,7 +489,7 @@ const addInvoiceDetail = async (req, res) => {
     }
 }
 const getInvoiceDetail = async (req, res) => {
-    const { id } = req.params;
+    const id = req.params.idInvoice;
   try {
     const dbResponse = await connect.query(
       `SELECT id_invoice,id_product,qty,unit_price FROM invoice_detail
