@@ -79,7 +79,9 @@ const createProduct = async (req, res) => {
 }
 const getProducts = async (req, res) => {
     try {
-        const dbResponse = await connect.query('SELECT * FROM products')
+        const dbResponse = await connect.query(`SELECT products.*, cat.category_name FROM products
+        INNER JOIN categories AS cat
+        ON products.category_id = cat.category_id`)
         res.status(200).send({
             data:dbResponse.rows
         })
@@ -92,7 +94,9 @@ const getProducts = async (req, res) => {
 const getProduct = async (req, res) => {
     const id = req.params.idProduct
     try {
-        const dbResponse = await connect.query('SELECT * FROM mascotas WHERE id_product = $1',[id])
+        const dbResponse = await connect.query(`SELECT products.*, cat.category_name FROM products
+        INNER JOIN categories AS cat
+        ON products.category_id = cat.category_id' WHERE id_product = $1`,[id])
         if(dbResponse.rowCount > 0){
             res.status(200).send({
                 data:dbResponse.rows
@@ -111,7 +115,7 @@ const getProduct = async (req, res) => {
 }
 const modifyProduct = async (req, res) => {
     const id = req.params.idProduct
-    const {product_name, description, price, category, brand, sku, image, stock, is_active} = req.body
+    const {product_name, description, price, category_id, brand, sku, image, stock, is_active} = req.body
     try {
         const dbResponse = await connect.query(`
         UPDATE products
@@ -119,14 +123,14 @@ const modifyProduct = async (req, res) => {
             product_name = $1,
             description = $2,
             price = $3,
-            category = $4,
+            category_id = $4,
             brand = $5,
             sku = $6,
             image = $7,
             stock = $8,
             is_active = $9
         WHERE product_id = $10`,
-        [product_name, description, price, category, brand, sku, image, stock, is_active, id])
+        [product_name, description, price, category_id, brand, sku, image, stock, is_active, id])
 
         if(dbResponse.rowCount > 0){
             res.status(200).send({
@@ -313,17 +317,71 @@ const getCategories = async (req, res) => {
     }
 }
 const getCategory = async (req, res) => {
+    const id = req.params.idCategory
+    try {
+        const dbResponse = await connect.query('SELECT * FROM categories WHERE category_id = $1',[id])
+        if(dbResponse.rowCount > 0){
+            res.status(200).send({
+                data:dbResponse.rows
+            })
+        }else{
+            res.status(404).send({
+                message:'Category not found'
+            })
+        }
 
+    } catch (error) {
+        res.status(404).send({
+            error
+        })
+    }
 }
 const modifyCategory = async (req, res) => {
+    const id = req.params.idCategory
+    const {category_name, is_active} = req.body
+    try {
+        const dbResponse = await connect.query(`
+        UPDATE categories
+        SET
+            category_name = $1,
+            is_active = $2,
+        WHERE category_id = $3`,
+        [category_name, is_active, id])
 
+        if(dbResponse.rowCount > 0){
+            res.status(200).send({
+                message:"Category modified"
+            })
+        }else{
+            res.status(409).send({
+                message:"Error, category not modified in this time, try later"
+            })
+        }
+    } catch (error) {
+        res.status(400).send({
+            error
+        })
+    }
 }
 const deleteCategory = async (req, res) => {
-
+    const id = req.params.idCategory
+    try {
+        const dbResponse = await connect.query(`DELETE FROM categories where category_id = $1`,[id])
+        if(dbResponse.rowCount > 0){
+            res.status(200).send({
+                message:"Category deleted"
+            })
+        }else{
+            res.status(409).send({
+                message:"Error, category not deleted in this time, try later"
+            })
+        }
+    } catch (error) {
+        res.status(400).send({
+            error
+        })
+    }
 }
- 
-
-
 
   module.exports = {
     createProduct,
