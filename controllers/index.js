@@ -492,8 +492,8 @@ const getInvoiceDetail = async (req, res) => {
     const id = req.params.idInvoice;
   try {
     const dbResponse = await connect.query(
-      `SELECT id_invoice,id_product,qty,unit_price FROM invoice_detail
-    INNER JOIN products ON invoice_detail.id_product=product.product_id WHERE id_invoice=$1;`,
+      `SELECT id_invoice,id_product,products.product_name,qty,unit_price  FROM invoice_detail
+    INNER JOIN products ON invoice_detail.id_product=products.product_id WHERE id_invoice=$1;`,
       [id]
     );
     console.log(dbResponse.rows);
