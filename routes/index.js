@@ -52,7 +52,7 @@ router.put('/api/v1/invoices/:idInvoice', modifyInvoice)
 router.delete('/api/v1/invoices/:idInvoice', deleteInvoice)
 
 router.post('/api/v1/invoices/detail', addInvoiceDetail)
-router.get('/api/v1/invoices/detail:idInvoice', getInvoiceDetail)
+router.get('/api/v1/invoices/detail/:idInvoice', getInvoiceDetail)
 
 // CRUD de Categorias
 
