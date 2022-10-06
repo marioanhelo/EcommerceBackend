@@ -1,6 +1,6 @@
 const express = require('express') // Importamos la libreria express
 const app = express() // Inicializamos la libreria en una constante
-const router = require('./routes') // Importamos las rutas
+const router = require('../routes') // Importamos las rutas
 
 // Middlewares --> Obtienen los datos de la peticion antes de que lleguen a la nuestra funcion
 app.use(express.json()) // Permitimos comunicacion a traves de formato JSON
