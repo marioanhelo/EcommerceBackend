@@ -471,7 +471,7 @@ const addInvoiceDetail = async (req, res) => {
     try {
       const dbResponse = await connect.query(
         "INSERT INTO invoice_detail(id_product, id_invoice, qty, unit_price, total) VALUES ($1,$2,$3,$4,$5);",
-        [id_invoice, id_product, qty, unit_price, total]
+        [id_product, id_invoice, qty, unit_price, total]
       );
       if (dbResponse.rowCount > 0) {
         res.status(201).send({
