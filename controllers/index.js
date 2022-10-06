@@ -467,10 +467,10 @@ const deleteCategory = async (req, res) => {
 }
 
 const addInvoiceDetail = async (req, res) => {
-    const { id_invoice, id_product, qty, unit_price, total } = req.body;
+    const { id_product, id_invoice, qty, unit_price, total } = req.body;
     try {
       const dbResponse = await connect.query(
-        "INSERT INTO invoice_detail(id_invoice, id_product, qty, unit_price, total)values($1,$2,$3,$4);",
+        "INSERT INTO invoice_detail(id_product, id_invoice, qty, unit_price, total) VALUES ($1,$2,$3,$4,$5);",
         [id_invoice, id_product, qty, unit_price, total]
       );
       if (dbResponse.rowCount > 0) {
