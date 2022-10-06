@@ -1,6 +1,59 @@
 const connect = require ('../database')
 const { createToken } = require('../utils')
 
+ //REGISTER
+ const registerController = async (req,res)=>{
+    const{ first_name, last_name, birthday, gender, email, role, client_password } = req.body
+    try {
+        const dbResponse = await connect.query(
+            "INSERT INTO clients (first_name, last_name, birthday, gender, email, role, client_password) VALUES ($1, $2,$3,$4, $5, $6, crypt($7,gen_salt('bf')))",
+        [first_name, last_name, birthday, gender, email, role, client_password])
+        if(dbResponse.rowCount > 0){
+            res.status(201).send({
+                message:"Client Created"
+            })
+        }else{
+            res.status(409).send({
+                message:"Error, client not created"
+            })
+        }
+    } catch (error) {
+        res.status(409).send({
+            error
+        })
+    }
+  }
+
+//Login
+const loginController = async (req, res) => {
+    const { email, bodyPassword } = req.body
+    try {
+      const dbResponse = await connect.query(
+        "SELECT * FROM clients WHERE email = $1 AND client_password = crypt($2, password)",
+        [email, bodyPassword]
+      )
+      if (dbResponse.rowCount > 0) {
+        const data = {
+          id: dbResponse.rows[0].id,
+          email: dbResponse.rows[0].email
+        }
+        const token = createToken(data)
+        res.status(200).send({
+          data: token
+        })
+      } else {
+        res.status(404).send({
+          message: "Usuario o contraseña incorrectos."
+        })
+      }
+    } catch (error) {
+      res.status(404).send({
+        error
+      })
+    }
+  }
+
+
 //  Products Controllers
 
 const createProduct = async (req, res) => {
@@ -227,7 +280,25 @@ const deleteInvoice = async (req, res) => {
 // Categories Controllers
 
 const createCategory = async (req, res) => {
+    const {category_name, is_active} = req.body
+    try {
+        const dbResponse = await connect.query('INSERT INTO categories (category_name, is_active) VALUES ($1, $2)',
+        [category_name, is_active] )
+        if(dbResponse.rowCount > 0){
+            res.status(201).send({
+                message:"Category Created"
+            })
+        }else{
+            res.status(409).send({
+                message:"Error, the category could not be created at this time"
+            })
+        }
 
+    } catch (error) {
+        res.status(409).send({
+            error
+        })
+    }
 }
 const getCategories = async (req, res) => {
     try {
@@ -250,57 +321,7 @@ const modifyCategory = async (req, res) => {
 const deleteCategory = async (req, res) => {
 
 }
-  //REGISTER
-  const registerController = async (req,res)=>{
-    const{ first_name, last_name, birthday, gender, email, role, client_password } = req.body
-    try {
-        const dbResponse = await connect.query(
-            "INSERT INTO clients (first_name, last_name, birthday, gender, email, role, client_password) VALUES ($1, $2,$3,$4, $5, $6, crypt($7,gen_salt('bf')))",
-        [first_name, last_name, birthday, gender, email, role, client_password])
-        if(dbResponse.rowCount > 0){
-            res.status(201).send({
-                message:"Client Created"
-            })
-        }else{
-            res.status(409).send({
-                message:"Error, client not created"
-            })
-        }
-    } catch (error) {
-        res.status(409).send({
-            error
-        })
-    }
-  }
-
-//Login
-const loginController = async (req, res) => {
-    const { email, bodyPassword } = req.body
-    try {
-      const dbResponse = await connect.query(
-        "SELECT * FROM clients WHERE email = $1 AND client_password = crypt($2, password)",
-        [email, bodyPassword]
-      )
-      if (dbResponse.rowCount > 0) {
-        const data = {
-          id: dbResponse.rows[0].id,
-          email: dbResponse.rows[0].email
-        }
-        const token = createToken(data)
-        res.status(200).send({
-          data: token
-        })
-      } else {
-        res.status(404).send({
-          message: "Usuario o contraseña incorrectos."
-        })
-      }
-    } catch (error) {
-      res.status(404).send({
-        error
-      })
-    }
-  }
+ 
 
 
 
