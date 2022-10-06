@@ -57,10 +57,10 @@ const loginController = async (req, res) => {
 //  Products Controllers
 
 const createProduct = async (req, res) => {
-    const {product_name, description, price, category, brand, sku, image, stock, is_active} = req.body
+    const {product_name, description, price, category_id, brand, sku, image, stock, is_active} = req.body
     try {
-        const dbResponse = await connect.query('INSERT INTO products (product_name, description, price, category, brand, sku, image, stock, is_active) VALUES ($1, $2, $3, $4 ,$5, $6, $7, $8, $9)',
-        [product_name, description, price, category, brand, sku, image, stock, is_active] )
+        const dbResponse = await connect.query('INSERT INTO products (product_name, description, price, category_id, brand, sku, image, stock, is_active) VALUES ($1, $2, $3, $4 ,$5, $6, $7, $8, $9)',
+        [product_name, description, price, category_id, brand, sku, image, stock, is_active] )
         if(dbResponse.rowCount > 0){
             res.status(201).send({
                 message:"Product Created"
