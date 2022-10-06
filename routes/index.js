@@ -20,47 +20,51 @@ const { createProduct,
     getCategory,
     modifyCategory,
     deleteCategory,
+    addInvoiceDetail,
+    getInvoiceDetail,
     registerController,
     loginController } = require('../controllers')
 
 // CRUD de Products
 
-router.post('/products', createProduct)
-router.get('/products', getProducts)
-router.get('/products/:idProduct', getProduct)
-router.put('/products/:idProduct', modifyProduct)
-router.delete('/products/:idProduct', deleteProduct)
+router.post('api/v1/products', createProduct)
+router.get('api/v1/products', getProducts)
+router.get('api/v1/products/:idProduct', getProduct)
+router.put('api/v1/products/:idProduct', modifyProduct)
+router.delete('api/v1/products/:idProduct', deleteProduct)
 
 
 
 // CRUD de Clients
 
-router.get('/clients', getClients)
-router.get('/clients/:idClient', getClient)
-router.put('/clients/:idClient', modifyClient)
-router.delete('/clients/:idClient', deleteClient)
+router.get('api/v1/clients', getClients)
+router.get('api/v1/clients/:idClient', getClient)
+router.put('api/v1/clients/:idClient', modifyClient)
+router.delete('api/v1/clients/:idClient', deleteClient)
 
 
 // CRUD de Invoices
 
-router.post('/invoices', createInvoice)
-router.get('/invoices', getInvoices)
-router.get('/invoices/:idInvoice', getInvoice)
-router.put('/invoices/:idInvoice', modifyInvoice)
-router.delete('/invoices/:idInvoice', deleteInvoice)
+router.post('api/v1/invoices', createInvoice)
+router.get('api/v1/invoices', getInvoices)
+router.get('api/v1/invoices/:idInvoice', getInvoice)
+router.put('api/v1/invoices/:idInvoice', modifyInvoice)
+router.delete('api/v1/invoices/:idInvoice', deleteInvoice)
 
+router.post('api/v1/invoices/detail', addInvoiceDetail)
+router.get('api/v1/invoices/detail:idInvoice', getInvoiceDetail)
 
 // CRUD de Categorias
 
-router.post('/categories', createCategory)
-router.get('/categories', getCategories)
-router.get('/categories/:idInvoice', getCategory)
-router.put('/categories/:idInvoice', modifyCategory)
-router.delete('/categories/:idInvoice', deleteCategory)
+router.post('api/v1/categories', createCategory)
+router.get('api/v1/categories', getCategories)
+router.get('api/v1/categories/:idInvoice', getCategory)
+router.put('api/v1/categories/:idInvoice', modifyCategory)
+router.delete('api/v1/categories/:idInvoice', deleteCategory)
 
 //LOGIN
 
-router.post('/login', loginController)
-router.post('/register', registerController)
+router.post('api/v1/login', loginController)
+router.post('api/v1/register', registerController)
 
 module.exports = router

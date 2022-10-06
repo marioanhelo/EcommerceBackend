@@ -18,9 +18,15 @@ const { createToken } = require('../utils')
             })
         }
     } catch (error) {
-        res.status(409).send({
-            error
-        })
+        if (error.code =="23505"){
+            res.status(409).send({
+                message:"Error, the email account is already in use"
+            })
+        }else{
+            res.status(409).send({
+                error
+            })
+        }
     }
   }
 
@@ -29,7 +35,7 @@ const loginController = async (req, res) => {
     const { email, bodyPassword } = req.body
     try {
       const dbResponse = await connect.query(
-        "SELECT * FROM clients WHERE email = $1 AND client_password = crypt($2, password)",
+        "SELECT * FROM clients WHERE email = $1 AND client_password = crypt($2, client_password)",
         [email, bodyPassword]
       )
       if (dbResponse.rowCount > 0) {
@@ -272,13 +278,71 @@ const getInvoices = async (req, res) => {
     }
 }
 const getInvoice = async (req, res) => {
+    const id = req.params.idInvoice
+    try {
+        const dbResponse = await connect.query('SELECT * FROM invoices WHERE invoice_id = $1',[id])
+        if(dbResponse.rowCount > 0){
+            res.status(200).send({
+                data:dbResponse.rows
+            })
+        }else{
+            res.status(404).send({
+                message:'Invoice not found'
+            })
+        }
 
+    } catch (error) {
+        res.status(404).send({
+            error
+        })
+    }
 }
 const modifyInvoice = async (req, res) => {
+    const id = req.params.idClient
+    const {total, invoice_date, id_client} = req.body
+    try {
+        const dbResponse = await connect.query(`
+        UPDATE invoices
+        SET
+            total = $1,
+            invoice_date = $2,
+            id_client = $3
+        WHERE invoice_id = $4`,
+        [total, invoice_date, id_client, id])
 
+        if(dbResponse.rowCount > 0){
+            res.status(200).send({
+                message:"Invoice modified"
+            })
+        }else{
+            res.status(409).send({
+                message:"Error, client not modified in this time, try later"
+            })
+        }
+    } catch (error) {
+        res.status(400).send({
+            error
+        })
+    }
 }
 const deleteInvoice = async (req, res) => {
-
+    const id = req.params.idInvoice
+    try {
+        const dbResponse = await connect.query(`DELETE FROM invoices where invoice_id = $1`,[id])
+        if(dbResponse.rowCount > 0){
+            res.status(200).send({
+                message:"Invoice deleted"
+            })
+        }else{
+            res.status(409).send({
+                message:"Error, invoice not deleted in this time, try later"
+            })
+        }
+    } catch (error) {
+        res.status(400).send({
+            error
+        })
+    }
 }
 
 // Categories Controllers
@@ -383,6 +447,48 @@ const deleteCategory = async (req, res) => {
     }
 }
 
+const addInvoiceDetail = async (req, res) => {
+    const { id_invoice, id_product, qty, unit_price, total } = req.body;
+    try {
+      const dbResponse = await connect.query(
+        "INSERT INTO invoice_detail(id_invoice, id_product, qty, unit_price, total)values($1,$2,$3,$4);",
+        [id_invoice, id_product, qty, unit_price, total]
+      );
+      if (dbResponse.rowCount > 0) {
+        res.status(201).send({
+          message: "Detail created",
+        });
+      } else {
+        res.status(409).send({
+          message: "Error, detail not created in this time, try later",
+        });
+      }
+    } catch (error) {
+      res.status(404).send({
+        error,
+      });
+    }
+}
+const getInvoiceDetail = async (req, res) => {
+    const { id } = req.params;
+  try {
+    const dbResponse = await connect.query(
+      `SELECT id_invoice,id_product,qty,unit_price FROM invoice_detail
+    INNER JOIN products ON invoice_detail.id_product=product.product_id WHERE id_invoice=$1;`,
+      [id]
+    );
+    console.log(dbResponse.rows);
+    res.status(200).send({
+      data: dbResponse.rows,
+    });
+  } catch (error) {
+    res.status(404).send({
+      error,
+    });
+  }
+}
+
+
   module.exports = {
     createProduct,
     getProducts,
@@ -403,6 +509,8 @@ const deleteCategory = async (req, res) => {
     getCategory,
     modifyCategory,
     deleteCategory,
+    addInvoiceDetail,
+    getInvoiceDetail,
     registerController,
     loginController,
   }
