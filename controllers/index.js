@@ -96,7 +96,7 @@ const getProduct = async (req, res) => {
     try {
         const dbResponse = await connect.query(`SELECT products.*, cat.category_name FROM products
         INNER JOIN categories AS cat
-        ON products.category_id = cat.category_id' WHERE product_id = $1`,[id])
+        ON products.category_id = cat.category_id WHERE product_id = $1`,[id])
         if(dbResponse.rowCount > 0){
             res.status(200).send({
                 data:dbResponse.rows
