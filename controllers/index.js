@@ -317,7 +317,7 @@ const getInvoice = async (req, res) => {
     }
 }
 const modifyInvoice = async (req, res) => {
-    const id = req.params.idClient
+    const id = req.params.idInvoice
     const {total, invoice_date, id_client} = req.body
     try {
         const dbResponse = await connect.query(`
@@ -335,7 +335,7 @@ const modifyInvoice = async (req, res) => {
             })
         }else{
             res.status(409).send({
-                message:"Error, client not modified in this time, try later"
+                message:"Error, invoice not modified in this time, try later"
             })
         }
     } catch (error) {
