@@ -286,7 +286,7 @@ const createInvoice = async (req, res) => {
 }
 const getInvoices = async (req, res) => {
     try {
-        const dbResponse = await connect.query('SELECT * FROM Invoices')
+        const dbResponse = await connect.query('SELECT * FROM Invoice')
         res.status(200).send({
             data:dbResponse.rows
         })
